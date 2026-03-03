@@ -3,15 +3,17 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../entities/user.entity';
+import { RoleService } from '../role/role.service';
 
 import { UpdateUserDto } from './dto/update-user.dto';
-import {CreateUserDto} from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly roleService: RoleService,
     ) {}
 
     findAll() {
@@ -32,6 +34,18 @@ export class UserService {
     }
 
     async create(createUseDto: CreateUserDto) {
-        
+        // Buscamos el role segun el nombre
+        const role = await this.roleService.findByName(createUseDto.roleName);
+        if (!role) {
+            throw new Error('Role not found');
+        }
+
+        // Transfomar del DTO al User
+        const newUser = this.userRepository.create({
+            ...createUseDto,
+            role,
+        });
+
+        return this.userRepository.save(newUser);
     }
 }
