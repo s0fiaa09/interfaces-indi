@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:16
-    container_name: postgres-db
+    container_name: postgres-db-1
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -10,7 +10,7 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/scripts:/docker-entrypoint-initdb.d
+      # - ./db/scripts:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:
