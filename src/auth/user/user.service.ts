@@ -48,4 +48,8 @@ export class UserService {
 
         return this.userRepository.save(newUser);
     }
+
+    findById(id: number) {
+        return this.userRepository.findOneBy({ id });
+    }
 }
