@@ -20,7 +20,7 @@ type SupportedDbTypes = 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mongodb' 
             useFactory: (configService: ConfigService) => ({
                 type: configService.get<SupportedDbTypes>('DB_TYPE') ?? 'mysql',
                 host: configService.get<string>('DB_HOST') ?? 'localhost',
-                port: configService.get<number>('DB_PORT') ?? 5432,
+                port: configService.get<number>('DB_PORT') ?? 5433,
                 username: configService.get<string>('DB_USERNAME') ?? 'root',
                 password: configService.get<string>('DB_PASSWORD') ?? 'root',
                 database: configService.get<string>('DB_DATABASE') ?? 'test',

@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository } from 'typeorm'; // se agrega auto al crear el repositorio
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { User } from '../entities/user.entity';
-import { RoleService } from '../role/role.service';
+import { User } from '../entities/user.entity'; // se agrega auto al crear la entidad, se importa para usarlo en el repositorio
+import { RolesService } from '../roles/role.service'; // se importa para usarlo en el servicio de usuarios
 
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User)
+        // dependecia del repositorio de usuarios
+        @InjectRepository(User) // espicificar que repositorio se va a inyectar
         private readonly userRepository: Repository<User>,
-        private readonly roleService: RoleService,
+        private readonly roleService: RolesService,
     ) {}
 
     findAll() {
@@ -28,7 +30,7 @@ export class UserService {
     async remove(id: number) {
         const result = await this.userRepository.delete(id);
         if (result.affected) {
-            return { id };
+            return { message: `User deleted` };
         }
         return null;
     }
