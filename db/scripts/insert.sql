@@ -1,53 +1,70 @@
--- Insert Roles
-INSERT INTO roles (name, description) VALUES
-('admin', 'Administrator with full access'),
-('user', 'Regular user with limited access');
+-- Script de inserción de datos de ejemplo para poblar todas las tablas
+-- Basado en las entidades y relaciones definidas en la aplicación
 
--- Insert Permissions
+-- 1. Insertar Permisos
 INSERT INTO permissions (name, description) VALUES
-('create', 'Create new resources'),
-('read', 'Read resources'),
-('update', 'Update existing resources'),
-('delete', 'Delete resources'),
-('manage_users', 'Manage user accounts'),
-('manage_roles', 'Manage roles and permissions');
+('create_game', 'Permite crear nuevos juegos'),
+('join_session', 'Permite unirse a sesiones de juego'),
+('host_session', 'Permite hospedar sesiones de juego'),
+('comment', 'Permite comentar en juegos'),
+('admin', 'Acceso administrativo completo');
 
--- Insert Role-Permission relationships
+-- 2. Insertar Roles
+INSERT INTO roles (name, description) VALUES
+('admin', 'Administrador con acceso completo'),
+('moderator', 'Moderador con permisos limitados'),
+('player', 'Jugador regular');
+
+-- 3. Insertar Relaciones Rol-Permiso
 INSERT INTO role_permissions (role_id, permission_id) VALUES
-(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), -- Admin has all permissions
-(2, 2),                                            -- User has only read permission
-(2, 1);                                            -- User can create
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),  -- Admin tiene todos los permisos
+(2, 1), (2, 2), (2, 3), (2, 4),          -- Moderator tiene create_game, join, host, comment
+(3, 2), (3, 4);                          -- Player tiene join y comment
 
--- Insert Users
+-- 4. Insertar Usuarios
 INSERT INTO users (username, email, password_hash, bio, role_id, created_at) VALUES
-('admin_user', 'admin@example.com', '$2b$10$hashedpassword1', 'Administrator account', 1, NOW()),
-('juan_perez', 'juan@example.com', '$2b$10$hashedpassword2', 'Lover of board games', 2, NOW()),
-('maria_garcia', 'maria@example.com', '$2b$10$hashedpassword3', 'Strategic games enthusiast', 2, NOW()),
-('carlos_lopez', 'carlos@example.com', '$2b$10$hashedpassword4', 'Party games fan', 2, NOW()),
-('ana_martinez', 'ana@example.com', '$2b$10$hashedpassword5', 'Competitive player', 2, NOW()),
-('luis_fernandez', 'luis@example.com', '$2b$10$hashedpassword6', 'Game collector', 2, NOW());
+('admin_user', 'admin@example.com', '$2b$10$dummyhashedpassword1', 'Cuenta de administrador', 1, NOW()),
+('juan_perez', 'juan@example.com', '$2b$10$dummyhashedpassword2', 'Amante de los juegos de mesa', 2, NOW()),
+('maria_garcia', 'maria@example.com', '$2b$10$dummyhashedpassword3', 'Entusiasta de juegos estratégicos', 3, NOW()),
+('carlos_lopez', 'carlos@example.com', '$2b$10$dummyhashedpassword4', 'Fan de juegos de fiesta', 3, NOW()),
+('ana_martinez', 'ana@example.com', '$2b$10$dummyhashedpassword5', 'Jugadora competitiva', 3, NOW()),
+('luis_fernandez', 'luis@example.com', '$2b$10$dummyhashedpassword6', 'Coleccionista de juegos', 3, NOW());
 
--- Insert Games
+-- 5. Insertar Juegos
 INSERT INTO games (name, description, min_players, max_players, category, created_by) VALUES
-('Chess', 'The classic strategy game of kings', 2, 2, 'strategy', 2),
-('Catan', 'Build and trade on an island', 3, 4, 'strategy', 3),
-('Carcassonne', 'Build a medieval landscape with tiles', 2, 5, 'abstract', 4),
-('Pandemic', 'Cooperatively save the world from diseases', 2, 4, 'cooperative', 5),
-('Codenames', 'Guess the secret words through clues', 2, 8, 'party', 6);
+('Ajedrez', 'El clásico juego de estrategia de reyes', 2, 2, 'strategy', 2),
+('Catan', 'Construye y comercia en una isla', 3, 4, 'strategy', 3),
+('Carcassonne', 'Construye un paisaje medieval con fichas', 2, 5, 'abstract', 4),
+('Pandemic', 'Salva el mundo de enfermedades cooperativamente', 2, 4, 'cooperative', 5),
+('Codenames', 'Adivina las palabras secretas a través de pistas', 2, 8, 'party', 6);
 
--- Insert Sessions
-INSERT INTO sessions (game_id, host_id, date_session, status) VALUES
-(1, 2, NOW() - INTERVAL '2 days', 'completed'),
-(4, 3, NOW() - INTERVAL '1 day', 'completed');
+-- 6. Insertar Sesiones
+INSERT INTO sessions (game_id, host_id, date_session, status, notes) VALUES
+(1, 2, NOW() - INTERVAL '2 days', 'completed', 'Sesión clásica de ajedrez'),
+(2, 3, NOW() - INTERVAL '1 day', 'completed', 'Primera partida de Catan'),
+(4, 5, NOW(), 'ongoing', 'Partida en curso de Pandemic'),
+(5, 6, NOW() + INTERVAL '1 day', 'scheduled', 'Sesión programada de Codenames');
 
--- Insert Participants
+-- 7. Insertar Participantes
 INSERT INTO participants (session_id, user_id, score, position, is_winner) VALUES
-(1, 2, 50, 1, true),
-(1, 3, 35, 2, false),
-(2, 3, 75, 1, true),
-(2, 4, 60, 2, false),
-(2, 5, 55, 3, false),
-(2, 6, 40, 4, false);
+(1, 2, 1, 1, true),   -- Juan ganó el ajedrez
+(1, 3, 0, 2, false),  -- María perdió
+(2, 3, 10, 1, true),  -- María ganó Catan
+(2, 4, 8, 2, false),  -- Carlos segundo
+(2, 5, 6, 3, false),  -- Ana tercera
+(3, 5, 0, 1, false),  -- Ana en Pandemic (en curso, sin resultados)
+(3, 6, 0, 2, false),  -- Luis en Pandemic
+(4, 6, 0, 1, false),  -- Luis hospeda Codenames (programada)
+(4, 2, 0, 2, false);  -- Juan se une
+
+-- 8. Insertar Comentarios
+INSERT INTO comments (content, created_at, user_id, game_id) VALUES
+('¡Excelente juego estratégico!', NOW(), 3, 1),
+('Me encanta Catan, muy adictivo', NOW(), 4, 2),
+('Carcassonne es perfecto para familias', NOW(), 5, 3),
+('Pandemic es genial en cooperativo', NOW(), 6, 4),
+('Codenames siempre trae risas', NOW(), 2, 5),
+('Recomiendo este juego a todos', NOW(), 3, 1);
 
 -- Insert Comments
 INSERT INTO comments (content, user_id, game_id, created_at) VALUES

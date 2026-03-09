@@ -3,10 +3,11 @@ import { Repository } from 'typeorm'; // se agrega auto al crear el repositorio
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '../entities/user.entity'; // se agrega auto al crear la entidad, se importa para usarlo en el repositorio
+import { RolesService } from '../roles/role.service'; // se importa para usarlo en el servicio de usuarios
 
 import { UpdateUserDto } from './dto/update.user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { RolesService } from '../roles/role.service';
+
 
 @Injectable()
 export class UserService {
@@ -21,7 +22,7 @@ export class UserService {
         return this.userRepository.find();
     }
 
-    async Update(id: number, updateUserDto: UpdateUserDto) {
+    async update(id: number, updateUserDto: UpdateUserDto) {
         await this.userRepository.update(id, updateUserDto);
         return this.userRepository.findOneBy({ id });
     }
@@ -34,15 +35,23 @@ export class UserService {
         return null;
     }
 
-    async create(createUserDto: CreateUserDto) {
-        const role = await this.roleService.findByName(createUserDto.roleName);
+    async create(createUseDto: CreateUserDto) {
+        // Buscamos el role segun el nombre
+        const role = await this.roleService.findByName(createUseDto.roleName);
         if (!role) {
-            throw new Error(`Role not found`);
+            throw new Error('Role not found');
         }
+
+        // Transfomar del DTO al User
         const newUser = this.userRepository.create({
-            ...createUserDto,
+            ...createUseDto,
             role,
         });
+
         return this.userRepository.save(newUser);
+    }
+
+    findById(id: number) {
+        return this.userRepository.findOneBy({ id });
     }
 }
