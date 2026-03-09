@@ -39,13 +39,10 @@ export class UserService {
         if (!role) {
             throw new Error(`Role not found`);
         }
-        const user = this.userRepository.create({
-            username: createUserDto.username,
-            email: createUserDto.email,
-            passwordHash: createUserDto.passwordHash,
-            bio: createUserDto.bio,
+        const newUser = this.userRepository.create({
+            ...createUserDto,
             role,
         });
-        return this.userRepository.save(user);
+        return this.userRepository.save(newUser);
     }
 }
