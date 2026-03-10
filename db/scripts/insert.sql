@@ -1,6 +1,10 @@
 -- Script de inserción de datos de ejemplo para poblar todas las tablas
 -- Basado en las entidades y relaciones definidas en la aplicación
 
+-- 0. Limpiar todas las tablas, ignorar foreign keys y reiniciar IDs desde 1
+TRUNCATE TABLE comments, participants, sessions, games, users, role_permissions, permissions, roles
+    RESTART IDENTITY CASCADE;
+
 -- 1. Insertar Permisos
 INSERT INTO permissions (name, description) VALUES
 ('create_game', 'Permite crear nuevos juegos'),
@@ -64,14 +68,11 @@ INSERT INTO comments (content, created_at, user_id, game_id) VALUES
 ('Carcassonne es perfecto para familias', NOW(), 5, 3),
 ('Pandemic es genial en cooperativo', NOW(), 6, 4),
 ('Codenames siempre trae risas', NOW(), 2, 5),
-('Recomiendo este juego a todos', NOW(), 3, 1);
-
--- Insert Comments
-INSERT INTO comments (content, user_id, game_id, created_at) VALUES
-('Great game! Very strategic and engaging.', 2, 1, NOW() - INTERVAL '2 days'),
-('Catan is perfect for game nights with friends!', 3, 2, NOW() - INTERVAL '2 days'),
-('Love the tile-placement mechanics in Carcassonne', 4, 3, NOW() - INTERVAL '1 day'),
-('Pandemic is an excellent cooperative experience', 5, 4, NOW() - INTERVAL '1 day'),
-('Codenames is so much fun with large groups!', 6, 5, NOW() - INTERVAL '12 hours'),
-('Chess never gets old', 3, 1, NOW() - INTERVAL '12 hours'),
-('Building trade routes in Catan is addictive', 4, 2, NOW() - INTERVAL '6 hours');
+('Recomiendo este juego a todos', NOW(), 3, 1),
+('Great game! Very strategic and engaging.', NOW() - INTERVAL '2 days', 2, 1),
+('Catan is perfect for game nights with friends!', NOW() - INTERVAL '2 days', 3, 2),
+('Love the tile-placement mechanics in Carcassonne', NOW() - INTERVAL '1 day', 4, 3),
+('Pandemic is an excellent cooperative experience', NOW() - INTERVAL '1 day', 5, 4),
+('Codenames is so much fun with large groups!', NOW() - INTERVAL '12 hours', 6, 5),
+('Chess never gets old', NOW() - INTERVAL '12 hours', 3, 1),
+('Building trade routes in Catan is addictive', NOW() - INTERVAL '6 hours', 4, 2);
