@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { User } from '@auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
 
 import { Session } from './session.entity';
 import { Comment } from './comment.entity';

@@ -1,4 +1,4 @@
-import { SessionStatus } from '../entities/session.entity';
+import { SessionStatus } from '@/games/entities/session.entity';
 
 export class CreateSessionDto {
     gameId: number;

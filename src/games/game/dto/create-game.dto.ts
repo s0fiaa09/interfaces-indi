@@ -1,4 +1,4 @@
-import { GameCategory } from '../entities/game.entity';
+import { GameCategory } from '../../entities/game.entity';
 
 export class CreateGameDto {
     name: string;
@@ -6,5 +6,5 @@ export class CreateGameDto {
     minPlayers: number;
     maxPlayers: number;
     category: GameCategory;
-    createdById: number; // foreign key to users table
+    createdById: number; // foreign key de user
 }

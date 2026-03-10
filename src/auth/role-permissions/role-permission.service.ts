@@ -3,6 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { RolePermission } from '../entities/role-permission.entity';
+import { RoleService } from '../role/role.service';
+import { PermissionService } from '../permissions/permission.service';
+
 import { CreateRolePermissionDto } from './dto/create-role-permission.dto';
 import { UpdateRolePermissionDto } from './dto/update-role-permission.dto';
 
@@ -11,6 +14,8 @@ export class RolePermissionService {
     constructor(
         @InjectRepository(RolePermission)
         private readonly rpRepository: Repository<RolePermission>,
+        private readonly roleService: RoleService,
+        private readonly permissionService: PermissionService,
     ) {}
 
     findAll() {
@@ -22,12 +27,36 @@ export class RolePermissionService {
     }
 
     async create(createDto: CreateRolePermissionDto) {
-        return this.rpRepository.save(createDto);
+        const role = await this.roleService.findOne(createDto.roleId);
+        if (!role) {
+            throw new Error('Role not found');
+        }
+        const permission = await this.permissionService.findOne(createDto.permissionId);
+        if (!permission) {
+            throw new Error('Permission not found');
+        }
+        const rp = this.rpRepository.create({ role, permission });
+        return this.rpRepository.save(rp);
     }
 
-    async Update(id: number, updateDto: UpdateRolePermissionDto) {
-        await this.rpRepository.update(id, updateDto);
-        return this.findOne(id);
+    async update(id: number, updateDto: UpdateRolePermissionDto) {
+        // Primero buscamos el registro existente
+        const rp = await this.findOne(id);
+        if (!rp) throw new Error('RolePermission not found');
+
+        if (updateDto.roleId) {
+            const role = await this.roleService.findOne(updateDto.roleId);
+            if (!role) throw new Error('Role not found');
+            rp.role = role; // modificamos directamente la entidad encontrada
+        }
+
+        if (updateDto.permissionId) {
+            const permission = await this.permissionService.findOne(updateDto.permissionId);
+            if (!permission) throw new Error('Permission not found');
+            rp.permission = permission; // igual aquí
+        }
+
+        return this.rpRepository.save(rp); // save() maneja tanto crear como actualizar
     }
 
     async remove(id: number) {
